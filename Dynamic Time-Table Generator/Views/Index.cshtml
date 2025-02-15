@@ -1,0 +1,23 @@
+﻿@model Dynamic_Time_Table_Generator.Models.TimetableInputModel
+
+<form asp-action="GenerateTimetable" method="post">
+    <label for="WorkingDays">Number of Working Days</label>
+    <input type="number" asp-for="WorkingDays" min="1" max="7" required />
+
+    <label for="SubjectsPerDay">Subjects per Day</label>
+    <input type="number" asp-for="SubjectsPerDay" min="1" max="8" required />
+
+    <label for="TotalSubjects">Total Subjects</label>
+    <input type="number" asp-for="TotalSubjects" min="1" required />
+
+    <div>
+        <label for="Subjects">Enter Subjects and Hours:</label>
+        @for (int i = 0; i < Model.TotalSubjects; i++)
+        {
+            <input type="text" asp-for="Subjects[i].SubjectName" placeholder="Subject Name" required />
+            <input type="number" asp-for="Subjects[i].Hours" placeholder="Hours" required />
+        }
+    </div>
+
+    <button type="submit">Generate Timetable</button>
+</form>

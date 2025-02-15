@@ -1,0 +1,7 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/.vs
+/Dynamic Time-Table Generator/bin/Debug/net6.0
+/Dynamic Time-Table Generator/obj

@@ -1,0 +1,95 @@
+﻿@model Dynamic_Time_Table_Generator.Models.TimetableInputModel
+
+<div class="container col-md-5">
+    <div class="card shadow-lg p-4 rounded">
+        <h2 class="text-center mb-4">Dynamic Timetable Generator</h2>
+
+        <form asp-action="GenerateTimetable" method="post">
+            <div asp-validation-summary="All" class="text-danger"></div>
+
+            <div class="mb-3 input-group">
+                <span class="input-group-text w-50">Number of Working Days:</span>
+                <input type="number" asp-for="WorkingDays" class="form-control required-field" min="1" max="7" required />
+            </div>
+            <span asp-validation-for="WorkingDays" class="text-danger"></span>
+
+            <div class="mb-3 input-group">
+                <span class="input-group-text w-50">Subjects per Day:</span>
+                <input type="number" asp-for="SubjectsPerDay" class="form-control required-field" min="1" max="8" required />
+            </div>
+            <span asp-validation-for="SubjectsPerDay" class="text-danger"></span>
+
+            <div class="mb-3 input-group">
+                <span class="input-group-text w-50">Total Subjects:</span>
+                <input type="number" asp-for="TotalSubjects" id="TotalSubjects" class="form-control required-field" min="1" required />
+            </div>
+            <span asp-validation-for="TotalSubjects" class="text-danger"></span>
+
+            <!-- Subjects Input Section (Initially Hidden) -->
+            <div class="mb-3 subjects-label">
+                <label class="form-label">Enter Subjects and Hours:</label>
+                <div id="subjects-container"></div>
+            </div>
+
+            <div class="text-center">
+                <button type="submit" id="submitBtn" class="btn btn-primary btn-lg" disabled>Generate Timetable</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        if ($("#subjectsLabel").is(":hidden")) {
+            $("#TotalSubjects").val(0)
+        }
+        function checkFields() {
+            let allFilled = true;
+
+            $(".required-field").each(function () {
+                if ($(this).val().trim() === "" || $(this).val() <= 0) {
+                    allFilled = false;
+                }
+            });
+
+            if ($("#TotalSubjects").val() > 0) {
+                $(".subjectName, .subjectHours").each(function () {
+                    if ($(this).val().trim() === "" || $(this).val() <= 0) {
+                        allFilled = false;
+                    }
+                });
+            }
+
+            $("#submitBtn").prop("disabled", !allFilled);
+        }
+
+        function generateSubjects() {
+            let totalSubjects = parseInt($("#TotalSubjects").val());
+            let subjectsContainer = $("#subjects-container");
+            let subjectsLabel = $(".subjects-label");
+
+            subjectsContainer.empty();
+
+            if (totalSubjects > 0) {
+                subjectsLabel.show();
+                for (let i = 0; i < totalSubjects; i++) {
+                    let subjectInput =`
+                        <div class="input-group mb-2" >
+                            <input type="text" name = "Subjects[${i}].SubjectName" class="form-control subjectName" placeholder = "Subject Name" required />
+                            <input type="number" name = "Subjects[${i}].Hours" class="form-control subjectHours" placeholder = "Hours" min = "1" required />
+                        </div>`;
+                    subjectsContainer.append(subjectInput);
+                }
+            } else {
+                subjectsLabel.hide();
+            }
+
+            checkFields();
+        }
+
+        $(document).on("input", ".required-field, .subjectName, .subjectHours", checkFields);
+        $("#TotalSubjects").on("blur", generateSubjects);
+
+        $(".subjects-label").hide();
+    });
+</script>
